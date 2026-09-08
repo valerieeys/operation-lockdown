@@ -1,7 +1,15 @@
 {
   "name": "operation-lockdown",
   "private": true,
-  "version": "0.0.0",
+    "homepage": "https://valerieeys.github.io/operation-lockdown",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

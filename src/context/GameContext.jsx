@@ -185,7 +185,10 @@ export function GameProvider({ children }) {
   const joinRoom = async (code, nickname) => {
     const g = await storeRef.current.getDoc("games/" + code);
     if (!g) {
-      flashNotice("Room " + code + " was not found. Check the four letters with your Game Master.", "bad");
+      const hint = storeKind === "local"
+        ? "Room not found. Note: Supabase is not connected — rooms created on other devices are not visible. Check your environment variables."
+        : "Room " + code + " was not found. Check the four letters with your Game Master.";
+      flashNotice(hint, "bad");
       return;
     }
     const pid = session.playerId || ("pl_" + rid(7));

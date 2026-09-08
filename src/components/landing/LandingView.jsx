@@ -50,7 +50,7 @@ export function LandingView() {
             </table>
           </div>
           <p className="tiny">
-            Around 20 minutes for two or three teams. Every player needs a phone; the Game Master needs one laptop.
+            Around 20 minutes for 4–8 players. Every player needs a phone or tablet; the Game Master needs one laptop.
           </p>
         </div>
       </div>

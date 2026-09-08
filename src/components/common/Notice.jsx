@@ -18,8 +18,12 @@ export function OfflineBanner() {
   if (storeReady) return null;
 
   return (
-    <div className="notice" style={{ marginBottom: 14 }}>
-      <strong>Practice mode.</strong> No shared room is reachable from here, so the game is running in this browser alone. Extra tabs on this same device still play together.
+    <div className="notice bad" style={{ marginBottom: 14 }}>
+      <strong>⚠ Offline mode — players on other devices cannot join.</strong>{" "}
+      Supabase is not connected. Fill in <code>VITE_SUPABASE_URL</code> and{" "}
+      <code>VITE_SUPABASE_ANON_KEY</code> in your <code>.env</code> file (or Vercel
+      environment variables) and redeploy. Until then this room only works in this
+      browser tab.
     </div>
   );
 }
