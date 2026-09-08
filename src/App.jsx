@@ -15,7 +15,7 @@ function LoadingView() {
       <OfflineBanner />
       <span className="label blink">Establishing secure link…</span>
       <p className="lede">Room {session?.code || ""}</p>
-      <button className="btn ghost" onClick={leaveRoom} style={{ alignSelf: "flex-start" }}>
+      <button type="button" className="btn ghost" onClick={leaveRoom} style={{ alignSelf: "flex-start" }}>
         Cancel
       </button>
     </div>

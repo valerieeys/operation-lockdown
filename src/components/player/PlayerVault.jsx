@@ -14,6 +14,13 @@ export function PlayerVault() {
   const letter = spyData && spyData.ok ? VAULT_LETTER : null;
   const digits = knownDigits(log, me);
   const known = [letter, ...digits];
+  const vaultValue = (ui.vaultDraft || "").trim();
+
+  const handleSubmit = async () => {
+    if (!vaultValue) return;
+    await submitVault(vaultValue);
+    setUi(prev => ({ ...prev, vaultDraft: "" }));
+  };
 
   if (isOpen) {
     return (
@@ -67,17 +74,15 @@ export function PlayerVault() {
           onKeyDown={e => {
             if (e.key === "Enter") {
               e.preventDefault();
-              submitVault(ui.vaultDraft);
-              setUi(prev => ({ ...prev, vaultDraft: "" }));
+              handleSubmit();
             }
           }}
         />
         <button
+          type="button"
           className="btn primary block"
-          onClick={() => {
-            submitVault(ui.vaultDraft);
-            setUi(prev => ({ ...prev, vaultDraft: "" }));
-          }}
+          onClick={handleSubmit}
+          disabled={!vaultValue}
         >
           Open the vault
         </button>

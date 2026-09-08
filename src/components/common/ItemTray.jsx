@@ -4,7 +4,7 @@ import { pItems } from "../../utils/derivations";
 import { ITEM_BY_ID } from "../../config/gameData";
 
 export function ItemTray({ currentRef }) {
-  const { session, log, game, useItem } = useGame();
+  const { session, log, game, useItem: activateItem } = useGame();
   const items = pItems(log, session.playerId);
 
   if (!items.length) return null;
@@ -37,7 +37,7 @@ export function ItemTray({ currentRef }) {
               className="btn sm"
               disabled={!can}
               title={it.effect}
-              onClick={() => useItem(g.item, currentRef || null)}
+              onClick={() => activateItem(g.item, currentRef || null)}
             >
               Use {it.name}
             </button>

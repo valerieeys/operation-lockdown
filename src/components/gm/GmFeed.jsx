@@ -24,6 +24,7 @@ export function GmFeed() {
                   {pts}
                 </span>
                 <span className="grow">
+                  <strong>{t.name}: </strong>
                   {e.data.label || e.data.kind}
                   {money ? (
                     <span className="mono tiny"> (${money})</span>

@@ -35,6 +35,7 @@ export function PlayerContainer() {
         {body}
         <hr className="rule" />
         <button
+          type="button"
           className="btn ghost sm"
           onClick={leaveRoom}
           style={{ alignSelf: "flex-start" }}

@@ -81,6 +81,8 @@ export function PlayerSpy() {
             <p>{rEntry?.data?.text || ""}</p>
             {rEntry?.data?.approved ? (
               <span className="chip on">Accepted · +200</span>
+            ) : rEntry?.data?.reviewed ? (
+              <span className="chip off">Reviewed · no bonus</span>
             ) : (
               <span className="chip amber blink">Awaiting Game Master review</span>
             )}

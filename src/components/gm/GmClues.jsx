@@ -39,6 +39,11 @@ export function GmClues() {
       <dl className="kv">
         <dt>Thief</dt>
         <dd>{thief?.name} (Archives)</dd>
+        <dt>Clear reason</dt>
+        <dd>
+          Falcon left before the theft. Heron has a verified video-call alibi. Magpie was away from the building.
+          Kestrel is the remaining suspect, has Archives access, and the grey coat points to the Archives locker room.
+        </dd>
         <dt>Vault</dt>
         <dd className="mono" style={{ color: "var(--amber)", letterSpacing: ".15em" }}>
           {VAULT_PASSWORD}

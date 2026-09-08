@@ -64,7 +64,7 @@ export function GmAuction() {
               onClick={() => gmOpenAuction(i.id)}
               style={{ textAlign: "left" }}
             >
-              {i.name} <span className="mono" style={{ opacity: 0.6 }}>· from ${i.start}</span>
+              Open {i.name} <span className="mono" style={{ opacity: 0.6 }}>· from ${i.start}</span>
             </button>
           ))}
         </div>

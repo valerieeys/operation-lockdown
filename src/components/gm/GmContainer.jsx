@@ -64,7 +64,7 @@ export function GmContainer() {
               >
                 Close and delete this room
               </button>
-              <button className="btn sm ghost block" onClick={leaveRoom}>
+              <button type="button" className="btn sm ghost block" onClick={leaveRoom}>
                 Leave the control room
               </button>
             </div>

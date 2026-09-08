@@ -6,31 +6,33 @@ import {
 import { SUSPECTS } from "../../config/gameData";
 
 export function GmReasoning() {
-  const { players, log, gmApproveReasoning } = useGame();
+  const { players, log, gmApproveReasoning, gmDeclineReasoning } = useGame();
   const allAgents = agents(players);
 
   const pending = allAgents
     .map(p => reasoningEntry(log, p.id))
     .filter(Boolean)
-    .filter(e => !e.data.approved);
+    .filter(e => !e.data.reviewed);
 
   const done = allAgents
     .map(p => reasoningEntry(log, p.id))
     .filter(Boolean)
-    .filter(e => e.data.approved);
-
-  if (!pending.length && !done.length) return null;
+    .filter(e => e.data.reviewed);
 
   return (
     <div className="panel stack g12">
       <div className="row spread">
-        <span className="label">English reasoning</span>
+        <span className="label">Spy Mission responses</span>
         {pending.length ? (
           <span className="chip amber blink">{pending.length} to mark</span>
         ) : (
           <span className="chip on">all marked</span>
         )}
       </div>
+
+      {!pending.length && !done.length && (
+        <span className="tiny">Answers and English explanations will appear here as agents submit them.</span>
+      )}
 
       {pending.map(e => {
         const sp = spyAnswer(log, e.data.pid);
@@ -46,13 +48,27 @@ export function GmReasoning() {
               )}
             </div>
             <p style={{ fontSize: ".9rem" }}>{e.data.text}</p>
-            <button
-              className="btn sm primary"
-              onClick={() => gmApproveReasoning(e.data.pid)}
-              style={{ alignSelf: "flex-start" }}
-            >
-              Accept the English &middot; +200
-            </button>
+            {sp?.ok ? (
+              <div className="row wrapping">
+                <button
+                  className="btn sm primary"
+                  onClick={() => gmApproveReasoning(e.data.pid)}
+                >
+                  Clear and correct &middot; +200
+                </button>
+                <button className="btn sm ghost" onClick={() => gmDeclineReasoning(e.data.pid)}>
+                  No bonus
+                </button>
+              </div>
+            ) : sp ? (
+              <button className="btn sm ghost" onClick={() => gmDeclineReasoning(e.data.pid)} style={{ alignSelf: "flex-start" }}>
+                Mark reviewed, no bonus
+              </button>
+            ) : (
+              <span className="tiny" style={{ color: "var(--alarm)" }}>
+                Waiting for the accusation to sync.
+              </span>
+            )}
           </div>
         );
       })}
@@ -60,7 +76,7 @@ export function GmReasoning() {
       {done.length > 0 && (
         <div className="row wrapping" style={{ gap: 6, paddingTop: 8, borderTop: "1px solid var(--line)" }}>
           {done.map(e => (
-            <span key={e.id} className="chip on">
+            <span key={e.id} className={`chip ${e.data.approved ? "on" : "off"}`}>
               {pName(players, e.data.pid)}
             </span>
           ))}

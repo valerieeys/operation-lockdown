@@ -5,7 +5,7 @@ import { ITEMS, ITEM_BY_ID } from "../../config/gameData";
 import { ItemTray } from "../common/ItemTray";
 
 export function PlayerAuction() {
-  const { session, game, log, bids, ui, setUi, placeBid } = useGame();
+  const { session, game, log, bids, ui, setUi, placeBid, players } = useGame();
   const a = game?.auction || {};
   const money = pMoney(log, session.playerId);
 
@@ -19,7 +19,7 @@ export function PlayerAuction() {
   };
 
   const cur = currentBid();
-  const leader = cur.pid ? pInfo(useGame().players, cur.pid) : null;
+  const leader = cur.pid ? pInfo(players, cur.pid) : null;
   const mine = cur.pid === session.playerId;
 
   if (a.status === "idle") {
@@ -51,7 +51,7 @@ export function PlayerAuction() {
   const it = ITEM_BY_ID[a.itemId];
 
   if (a.status === "closed") {
-    const w = a.winnerPid ? pInfo(useGame().players, a.winnerPid) : null;
+    const w = a.winnerPid ? pInfo(players, a.winnerPid) : null;
     return (
       <div className="stack g14">
         <span className="label hot">Lot {a.round} closed</span>
@@ -131,7 +131,7 @@ export function PlayerAuction() {
         <span className="label">Bid history</span>
         {roundBids.length ? (
           roundBids.slice(0, 8).map(b => {
-            const t = pInfo(useGame().players, b.data.pid);
+            const t = pInfo(players, b.data.pid);
             return (
               <div key={b.id} className="row">
                 <span className="pdot" style={{ background: t.color }}></span>

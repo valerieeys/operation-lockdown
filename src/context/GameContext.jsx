@@ -236,13 +236,19 @@ export function GameProvider({ children }) {
     if (ok) {
       await writeLog("p_" + me + "_" + p.id, {
         pid: me, kind: "puzzle", ref: p.id, ok: true,
-        points: SCORE.correct, label: p.kind + " puzzle solved — digit " + p.digit + " recovered"
+        answer: String(value || ""), points: SCORE.correct,
+        label: p.kind + " answer: “" + String(value || "") + "” — digit " + p.digit + " recovered"
       });
       setUi(prev => ({ ...prev, picked: null, answerDraft: "" }));
       flashNotice("Correct. Vault digit " + p.digit + " recovered.", "good");
     } else {
       const n = log.filter(e => e.data.pid === me && e.data.kind === "penalty" && e.data.ref === p.id).length;
-      const r = await applyPenalty(me, "w_" + me + "_" + p.id + "_" + n, "Wrong answer on " + p.kind, p.id);
+      const r = await applyPenalty(
+        me,
+        "w_" + me + "_" + p.id + "_" + n,
+        "Wrong " + p.kind + " answer: “" + String(value || "") + "”",
+        p.id
+      );
       flashNotice(r === "shielded" ? "Wrong — but your Shield absorbed the penalty." : "Not correct. −50 points. Try again.", "bad");
     }
   };
@@ -321,7 +327,7 @@ export function GameProvider({ children }) {
     await writeLog("s_" + me, {
       pid: me, kind: "spy", suspect: ui.suspect, ok,
       points: ok ? SCORE.spy : SCORE.wrong,
-      label: ok ? "Spy Mission solved — " + s.name + " identified" : "Spy Mission — wrong suspect (" + s.name + ")"
+      label: ok ? "Spy Mission: " + s.name + " identified" : "Spy Mission: wrong suspect (" + s.name + ")"
     });
     await writeLog("r_" + me, {
       pid: me, kind: "reasoning", text, approved: false, points: 0,
@@ -335,12 +341,17 @@ export function GameProvider({ children }) {
     if (!me || vaultOpen(log, me)) return;
     const v = String(value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
     if (v === VAULT_PASSWORD) {
-      await writeLog("v_" + me, { pid: me, kind: "vault", ok: true, points: SCORE.vault, label: "Final Vault opened" });
+      await writeLog("v_" + me, {
+        pid: me, kind: "vault", ok: true, answer: v, points: SCORE.vault,
+        label: "Final Vault password “" + v + "” accepted"
+      });
       flashNotice("Vault open. The doors are unlocked.", "good");
+      return true;
     } else {
       const n = log.filter(e => e.data.pid === me && e.data.kind === "penalty" && e.data.ref === "vault").length;
-      const r = await applyPenalty(me, "wv_" + me + "_" + n, "Wrong vault password", "vault");
+      const r = await applyPenalty(me, "wv_" + me + "_" + n, "Wrong vault password: “" + v + "”", "vault");
       flashNotice(r === "shielded" ? "Wrong password — Shield absorbed the penalty." : "Wrong password. −50 points.", "bad");
+      return false;
     }
   };
 
@@ -369,6 +380,8 @@ export function GameProvider({ children }) {
     const round = (game.auctionRound || 0) + 1;
     const it = ITEM_BY_ID[itemId];
     await patchGame({
+      phase: "auction",
+      timerEndsAt: now() + PHASE_BY_ID.auction.mins * 60000,
       auctionRound: round,
       auction: { status: "open", itemId, price: it.start, round, winnerPid: null, winningBid: 0 }
     });
@@ -412,10 +425,19 @@ export function GameProvider({ children }) {
 
   const gmApproveReasoning = async (pid) => {
     const e = reasoningEntry(log, pid);
-    if (!e || e.data.approved) return;
+    if (!e || e.data.reviewed) return;
     await storeRef.current.setDoc("games/" + game.code + "/log/" + e.id, {
-      ...e.data, approved: true, points: SCORE.reasoning,
+      ...e.data, reviewed: true, approved: true, points: SCORE.reasoning,
       label: "English reasoning accepted by Game Master"
+    });
+  };
+
+  const gmDeclineReasoning = async (pid) => {
+    const e = reasoningEntry(log, pid);
+    if (!e || e.data.reviewed) return;
+    await storeRef.current.setDoc("games/" + game.code + "/log/" + e.id, {
+      ...e.data, reviewed: true, approved: false, points: 0,
+      label: "English reasoning reviewed: no bonus awarded"
     });
   };
 
@@ -460,7 +482,7 @@ export function GameProvider({ children }) {
     flashNotice, createRoom, joinRoom, leaveRoom, gmRejoin,
     answerPuzzle, takeHint, useItem, placeBid, submitSpy, submitVault,
     gmSetPhase, gmAddTime, gmStopTimer, gmRestartTimer, gmOpenAuction, gmCloseAuction,
-    gmGrantItem, gmRevealClue, gmApproveReasoning, gmAdjust, gmResetRoom, gmCloseRoom
+    gmGrantItem, gmRevealClue, gmApproveReasoning, gmDeclineReasoning, gmAdjust, gmResetRoom, gmCloseRoom
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

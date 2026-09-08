@@ -3,10 +3,10 @@ import { useGame } from "../../context/GameContext";
 import {
   agents, ranked, pItems, spyAnswer, secsLeft, pBonus, mmss, vaultOpen
 } from "../../utils/derivations";
-import { ITEMS, ITEM_BY_ID, PUZZLES, SUSPECTS } from "../../config/gameData";
+import { ITEM_BY_ID, PUZZLES, SUSPECTS } from "../../config/gameData";
 
 export function GmRoster() {
-  const { players, log, game, gmAdjust, gmGrantItem } = useGame();
+  const { players, log, game, gmAdjust } = useGame();
   const allAgents = agents(players);
   const rankedAgents = ranked(players, log);
 
@@ -28,7 +28,7 @@ export function GmRoster() {
                 <th>Puzzles</th>
                 <th>Kit</th>
                 <th>Clock</th>
-                <th>Adjust</th>
+                <th>Score</th>
               </tr>
             </thead>
             <tbody>
@@ -94,23 +94,6 @@ export function GmRoster() {
                         <button className="btn sm" onClick={() => gmAdjust(id, -50)}>
                           &minus;50
                         </button>
-                        <select
-                          defaultValue=""
-                          onChange={e => {
-                            if (e.target.value) {
-                              gmGrantItem(id, e.target.value);
-                              e.target.value = "";
-                            }
-                          }}
-                          style={{ width: "auto", padding: "5px 7px", fontSize: ".75rem" }}
-                        >
-                          <option value="">Item…</option>
-                          {ITEMS.map(i => (
-                            <option key={i.id} value={i.id}>
-                              {i.name}
-                            </option>
-                          ))}
-                        </select>
                       </span>
                     </td>
                   </tr>
